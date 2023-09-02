@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace ChaosMod.Effects
 {
-	internal class EffectTimedTest : Effect
+	internal class EffectFreeze : Effect
 	{
-		public override string Name => "Timed test";
+		public override string Name => "Freeze!";
 		public override string Type => "timed";
 		public override float Length => 10;
 

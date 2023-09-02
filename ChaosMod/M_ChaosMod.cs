@@ -89,9 +89,9 @@ namespace ChaosMod
 			random = new Random();
 
 			// Register core effects.
-			RegisterEffect(new Effects.EffectInstantTest());
-			RegisterEffect(new Effects.EffectTimedTest());
-			RegisterEffect(new Effects.EffectRepeatedTest());
+			RegisterEffect(new Effects.EffectExitVehicle());
+			RegisterEffect(new Effects.EffectFreeze());
+			RegisterEffect(new Effects.EffectBhop());
 		}
 
 		/// <summary>

@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace ChaosMod.Effects
 {
-	internal class EffectInstantTest : Effect
+	internal class EffectExitVehicle : Effect
 	{
-		public override string Name => "Instant test";
+		public override string Name => "Exit vehicle";
 		public override string Type => "instant";
 
 		public override void Trigger()
 		{
-			mainscript.M.player.AJump();
+			mainscript.M.player.GetOut(mainscript.M.player.transform.position + mainscript.M.player.transform.up * 2f, true);
 		}
 	}
 }
