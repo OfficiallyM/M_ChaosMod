@@ -8,6 +8,7 @@ using Logger = ChaosMod.Modules.Logger;
 using Random = System.Random;
 using System.Collections;
 using System.Linq;
+using ChaosMod.Extensions;
 
 namespace ChaosMod
 {
@@ -129,16 +130,16 @@ namespace ChaosMod
 			// Main UI rendering.
 			if (enabled && !mainscript.M.menu.Menu.activeSelf)
 			{
-				GUI.Box(new Rect(0, 0, resolutionX, 40f), string.Empty, timerBackground);
+				GUI.Box(new Rect(0, 0, resolutionX, 30f), string.Empty, timerBackground);
 				float barFill = effectDelay / baseEffectDelay;
-				GUI.Box(new Rect(0, 0, resolutionX - (resolutionX * barFill), 40f), string.Empty, timerBar);
-				GUI.Label(new Rect(0, 0, resolutionX, 40f), $"{Mathf.RoundToInt(effectDelay)}s", timerText);
+				GUI.Box(new Rect(0, 0, resolutionX - (resolutionX * barFill), 30f), string.Empty, timerBar);
+				GUI.Label(new Rect(0, 0, resolutionX, 30f), $"{Mathf.RoundToInt(effectDelay)}s", timerText);
 
 				// Render effect history.
 				if (effectHistory.Count != 0)
 				{
 					effectHistoryY = baseEffectHistoryY;
-					GUI.Label(new Rect(resolutionX - 450f, effectHistoryY, 400f, resolutionY - baseEffectHistoryY), "<b>Effect history:</b>", effectStyle);
+					GUIExtensions.DrawOutline(new Rect(resolutionX - 450f, effectHistoryY, 400f, resolutionY - baseEffectHistoryY), "<b>Effect history:</b>", effectStyle, Color.black);
 					effectHistoryY += 25f;
 					foreach (EffectHistory history in effectHistory.Skip(Math.Max(0, effectHistory.Count - 10)).Reverse())
 					{
@@ -146,7 +147,7 @@ namespace ChaosMod
 						string effectLabel = effect.Name;
 						if (history.ActiveEffect != null)
 							effectLabel += $" - {Mathf.RoundToInt(history.ActiveEffect.Remaining)}s";
-						GUI.Label(new Rect(resolutionX - 450f, effectHistoryY, 400f, resolutionY - baseEffectHistoryY), effectLabel, effectStyle);
+						GUIExtensions.DrawOutline(new Rect(resolutionX - 450f, effectHistoryY, 400f, resolutionY - baseEffectHistoryY), effectLabel, effectStyle, Color.black);
 						effectHistoryY += 50f;
 					}
 				}
