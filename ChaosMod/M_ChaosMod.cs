@@ -62,7 +62,7 @@ namespace ChaosMod
 		// Effect control.
 		private Random random;
 		private List<Effect> effects = new List<Effect>();
-		private List<Effect> effectHistory = new List<Effect>();
+		private List<EffectHistory> effectHistory = new List<EffectHistory>();
 		private List<ActiveEffect> activeEffects = new List<ActiveEffect>();
 		private float baseEffectDelay = 30f;
 		private float effectDelay = 0f;
@@ -88,7 +88,9 @@ namespace ChaosMod
 			effectHistoryY = baseEffectHistoryY;
 			random = new Random();
 
-			RegisterEffect(new Effects.Test());
+			// Register core effects.
+			RegisterEffect(new Effects.EffectInstantTest());
+			RegisterEffect(new Effects.EffectTimedTest());
 		}
 
 		/// <summary>
@@ -137,9 +139,13 @@ namespace ChaosMod
 					effectHistoryY = baseEffectHistoryY;
 					GUI.Label(new Rect(resolutionX - 450f, effectHistoryY, 400f, resolutionY - baseEffectHistoryY), "<b>Effect history:</b>", effectStyle);
 					effectHistoryY += 25f;
-					foreach (Effect effect in effectHistory.Skip(Math.Max(0, effectHistory.Count - 10)))
+					foreach (EffectHistory history in effectHistory.Skip(Math.Max(0, effectHistory.Count - 10)).Reverse())
 					{
-						GUI.Label(new Rect(resolutionX - 450f, effectHistoryY, 400f, resolutionY - baseEffectHistoryY), effect.Name, effectStyle);
+						Effect effect = history.Effect;
+						string effectLabel = effect.Name;
+						if (history.ActiveEffect != null)
+							effectLabel += $" - {Mathf.RoundToInt(history.ActiveEffect.Remaining)}s";
+						GUI.Label(new Rect(resolutionX - 450f, effectHistoryY, 400f, resolutionY - baseEffectHistoryY), effectLabel, effectStyle);
 						effectHistoryY += 50f;
 					}
 				}
@@ -181,6 +187,10 @@ namespace ChaosMod
 					messageColor = new Color(100, 0, 0);
 					messageStyle.normal.textColor = messageColor;
 				}
+				else
+				{
+					logger.Log($"Loaded with {effects.Count} effects registered", Logger.LogLevel.Info);
+				}
 			}
 
 			if (Input.GetKeyDown(resetBind))
@@ -218,13 +228,33 @@ namespace ChaosMod
 			if (effects.Count == 0)
 				return;
 
+			foreach (ActiveEffect active in activeEffects)
+			{
+				switch (active.Effect.Type)
+				{
+					case "timed":
+						active.Remaining -= Time.deltaTime;
+
+						if (active.Remaining <= 0)
+						{
+							activeEffects.Remove(active);
+							active.Effect.End();
+						}
+						break;
+					case "repeated":
+						break;
+				}
+			}
+
 			effectDelay -= Time.deltaTime;
 			if (effectDelay <= 0)
 			{
 				// Trigger effect.
 				int index = random.Next(effects.Count);
 				Effect effect = effects[index];
-				effectHistory.Add(effect);
+				bool addToHistory = true;
+
+				ActiveEffect activeEffect = null;
 
 				switch (effect.Type)
 				{
@@ -237,14 +267,44 @@ namespace ChaosMod
 						{
 							logger.Log($"Effect {effect.Name} errored during trigger and will be disabled. Error - {ex}", Logger.LogLevel.Error);
 							effects.Remove(effect);
-							effectHistory.RemoveAt(effectHistory.Count - 1);
+							addToHistory = false;
 						}
 						break;
 					case "timed":
+						try
+						{
+							if (effect.Length != 0)
+							{
+								activeEffect = new ActiveEffect()
+								{
+									Effect = effect,
+									Remaining = effect.Length,
+								};
+								activeEffects.Add(activeEffect);
+								effect.Trigger();
+							}
+							else
+							{
+								logger.Log($"Timed effect {effect.Name} has no Length so will be disabled.", Logger.LogLevel.Error);
+								effects.Remove(effect);
+								addToHistory = false;
+							}
+						}
+						catch (Exception ex)
+						{
+							logger.Log($"Effect {effect.Name} errored during trigger and will be disabled. Error - {ex}", Logger.LogLevel.Error);
+						}
 						break;
 					case "repeated":
 						break;
 				}
+
+				if (addToHistory)
+					effectHistory.Add(new EffectHistory()
+					{
+						Effect = effect,
+						ActiveEffect = activeEffect,
+					});
 
 				effectDelay = baseEffectDelay;
 			}

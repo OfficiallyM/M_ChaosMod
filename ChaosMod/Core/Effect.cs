@@ -36,4 +36,10 @@ namespace ChaosMod.Core
 		/// </summary>
 		public virtual void End() { }
 	}
+
+	public class EffectHistory
+	{
+		public Effect Effect { get; set; }
+		public ActiveEffect ActiveEffect { get; set; }
+	}
 }

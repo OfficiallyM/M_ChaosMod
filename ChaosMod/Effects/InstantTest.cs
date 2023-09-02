@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace ChaosMod.Effects
 {
-	internal class Test : Effect
+	internal class EffectInstantTest : Effect
 	{
-		public override string Name => "Test effect";
+		public override string Name => "Instant test";
 		public override string Type => "instant";
 
 		public override void Trigger()

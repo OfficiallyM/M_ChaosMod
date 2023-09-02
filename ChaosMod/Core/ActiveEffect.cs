@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ChaosMod.Core
 {
-	internal class ActiveEffect
+	public class ActiveEffect
 	{
 		public Effect Effect { get; set; }
 		public float Remaining { get; set; }
