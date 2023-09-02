@@ -14,7 +14,8 @@ namespace ChaosMod.Effects
 
 		public override void Trigger()
 		{
-			mainscript.M.player.GetOut(mainscript.M.player.transform.position + mainscript.M.player.transform.up * 2f, true);
+			if (mainscript.M.player.lastCar != null || mainscript.M.player.Car != null)
+				mainscript.M.player.GetOut(mainscript.M.player.transform.position + mainscript.M.player.transform.up * 2f, true);
 		}
 	}
 }
