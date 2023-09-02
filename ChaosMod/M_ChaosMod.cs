@@ -190,14 +190,13 @@ namespace ChaosMod
 			{
 				enabled = !enabled;
 
-				messageStyle.normal.textColor = messageColor;
+				messageStyle.normal.textColor = new Color(0, 100, 0);
 				message = $"Chaos mod v{Meta.Version} by M- enabled";
 				message += $"\nLoaded {effects.Count} effects";
 				if (!enabled)
 				{
 					message = $"Chaos mod v{Meta.Version} by M- disabled";
-					messageColor = new Color(100, 0, 0);
-					messageStyle.normal.textColor = messageColor;
+					messageStyle.normal.textColor = new Color(100, 0, 0);
 				}
 			}
 
