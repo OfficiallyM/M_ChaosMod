@@ -91,6 +91,7 @@ namespace ChaosMod
 			// Register core effects.
 			RegisterEffect(new Effects.EffectInstantTest());
 			RegisterEffect(new Effects.EffectTimedTest());
+			RegisterEffect(new Effects.EffectRepeatedTest());
 		}
 
 		/// <summary>
@@ -228,21 +229,27 @@ namespace ChaosMod
 			if (effects.Count == 0)
 				return;
 
+			// Trigger active effects.
 			foreach (ActiveEffect active in activeEffects)
 			{
-				switch (active.Effect.Type)
-				{
-					case "timed":
-						active.Remaining -= Time.deltaTime;
+				active.Remaining -= Time.deltaTime;
+				bool expired = false;
 
-						if (active.Remaining <= 0)
-						{
-							activeEffects.Remove(active);
-							active.Effect.End();
-						}
-						break;
-					case "repeated":
-						break;
+				if (active.Remaining <= 0)
+				{
+					activeEffects.Remove(active);
+					active.Effect.End();
+					expired = true;
+				}
+
+				if (active.Effect.Type == "repeated" && !expired)
+				{
+					active.TriggerRemaining -= Time.deltaTime;
+					if (active.TriggerRemaining <= 0)
+					{
+						active.Effect.Trigger();
+						active.TriggerRemaining = active.Effect.Frequency;
+					}
 				}
 			}
 
@@ -296,6 +303,30 @@ namespace ChaosMod
 						}
 						break;
 					case "repeated":
+						try
+						{
+							if (effect.Length != 0 && effect.Frequency != 0)
+							{
+								activeEffect = new ActiveEffect()
+								{
+									Effect = effect,
+									Remaining = effect.Length,
+									TriggerRemaining = effect.Frequency,
+								};
+								activeEffects.Add(activeEffect);
+								effect.Trigger();
+							}
+							else
+							{
+								logger.Log($"Repeated effect {effect.Name} has no Length/Frequency so will be disabled.", Logger.LogLevel.Error);
+								effects.Remove(effect);
+								addToHistory = false;
+							}
+						}
+						catch (Exception ex)
+						{
+							logger.Log($"Effect {effect.Name} errored during trigger and will be disabled. Error - {ex}", Logger.LogLevel.Error);
+						}
 						break;
 				}
 
