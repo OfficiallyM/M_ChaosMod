@@ -118,7 +118,7 @@ namespace ChaosMod
 			// Messaging.
 			if (message != string.Empty)
 			{
-				GUI.Label(new Rect(resolutionX / 2f - resolutionX / 2, 60f, resolutionX, resolutionY - 60f), message, messageStyle);
+				GUIExtensions.DrawOutline(new Rect(resolutionX / 2f - resolutionX / 2, 60f, resolutionX, resolutionY - 60f), message, messageStyle, Color.black);
 				messageTime -= Time.deltaTime;
 				if (messageTime <= 0)
 				{
