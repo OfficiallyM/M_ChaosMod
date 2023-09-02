@@ -183,15 +183,12 @@ namespace ChaosMod
 
 				messageStyle.normal.textColor = messageColor;
 				message = $"Chaos mod v{Meta.Version} by M- enabled";
+				message += $"\nLoaded {effects.Count} effects";
 				if (!enabled)
 				{
 					message = $"Chaos mod v{Meta.Version} by M- disabled";
 					messageColor = new Color(100, 0, 0);
 					messageStyle.normal.textColor = messageColor;
-				}
-				else
-				{
-					logger.Log($"Loaded with {effects.Count} effects registered", Logger.LogLevel.Info);
 				}
 			}
 
