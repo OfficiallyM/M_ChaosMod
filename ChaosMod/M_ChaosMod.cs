@@ -61,7 +61,6 @@ namespace ChaosMod
 		};
 
 		// Effect control.
-		private Random random;
 		private List<Effect> effects = new List<Effect>();
 		private List<EffectHistory> effectHistory = new List<EffectHistory>();
 		private List<ActiveEffect> activeEffects = new List<ActiveEffect>();
@@ -87,7 +86,6 @@ namespace ChaosMod
 			messageTime = messageMaxTime;
 			effectDelay = baseEffectDelay;
 			effectHistoryY = baseEffectHistoryY;
-			random = new Random();
 
 			// Register core effects.
 			// Player effects.
@@ -266,7 +264,7 @@ namespace ChaosMod
 			if (effectDelay <= 0)
 			{
 				// Trigger effect.
-				int index = random.Next(effects.Count);
+				int index = UnityEngine.Random.Range(0, effects.Count);
 				Effect effect = effects[index];
 				bool addToHistory = true;
 
