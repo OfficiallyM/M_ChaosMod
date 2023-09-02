@@ -195,6 +195,8 @@ namespace ChaosMod
 				message += $"\nLoaded {effects.Count} effects";
 				if (!enabled)
 				{
+					DisableActiveEffects();
+					effectDelay = baseEffectDelay;
 					message = $"Chaos mod v{Meta.Version} by M- disabled";
 					messageStyle.normal.textColor = new Color(100, 0, 0);
 				}
@@ -202,19 +204,7 @@ namespace ChaosMod
 
 			if (Input.GetKeyDown(resetBind))
 			{
-				// Disable any active effects.
-				foreach (ActiveEffect activeEffect in activeEffects)
-				{
-					Effect effect = activeEffect.Effect;
-					try
-					{
-						effect.End();
-					}
-					catch (Exception ex)
-					{
-						logger.Log($"Failed to end effect {effect.Name} - {ex}", Logger.LogLevel.Error);
-					}
-				}
+				DisableActiveEffects();
 
 				// Reset everything to defaults.
 				activeEffects.Clear();
@@ -344,6 +334,26 @@ namespace ChaosMod
 					});
 
 				effectDelay = baseEffectDelay;
+			}
+		}
+
+		/// <summary>
+		/// Disables any currently active effects.
+		/// </summary>
+		private void DisableActiveEffects()
+		{
+			// Disable any active effects.
+			foreach (ActiveEffect activeEffect in activeEffects)
+			{
+				Effect effect = activeEffect.Effect;
+				try
+				{
+					effect.End();
+				}
+				catch (Exception ex)
+				{
+					logger.Log($"Failed to end effect {effect.Name} - {ex}", Logger.LogLevel.Error);
+				}
 			}
 		}
 	}
