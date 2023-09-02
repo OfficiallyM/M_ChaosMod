@@ -90,9 +90,20 @@ namespace ChaosMod
 			random = new Random();
 
 			// Register core effects.
-			RegisterEffect(new Effects.EffectExitVehicle());
-			RegisterEffect(new Effects.EffectFreeze());
-			RegisterEffect(new Effects.EffectBhop());
+			// Player effects.
+			RegisterEffect(new Effects.Player.EffectFreeze());
+			RegisterEffect(new Effects.Player.EffectBhop());
+
+			// Vehicle effects.
+			RegisterEffect(new Effects.Vehicle.EffectExitVehicle());
+			RegisterEffect(new Effects.Vehicle.EffectEmptyFuel());
+			RegisterEffect(new Effects.Vehicle.EffectPopTires());
+			RegisterEffect(new Effects.Vehicle.EffectRandomiseCondition());
+			RegisterEffect(new Effects.Vehicle.EffectRandomiseColor());
+
+			// World effects.
+			RegisterEffect(new Effects.World.EffectLowGravity());
+			RegisterEffect(new Effects.World.EffectNegativeGravity());
 		}
 
 		/// <summary>

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChaosMod.Effects
+namespace ChaosMod.Effects.Player
 {
 	internal class EffectBhop : Effect
 	{

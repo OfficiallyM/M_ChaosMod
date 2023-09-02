@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChaosMod.Effects
+namespace ChaosMod.Effects.Vehicle
 {
 	internal class EffectExitVehicle : Effect
 	{
@@ -15,7 +15,10 @@ namespace ChaosMod.Effects
 		public override void Trigger()
 		{
 			if (mainscript.M.player.lastCar != null || mainscript.M.player.Car != null)
+			{
+				mainscript.M.player.SwitchToCockpitView(true);
 				mainscript.M.player.GetOut(mainscript.M.player.transform.position + mainscript.M.player.transform.up * 2f, true);
+			}
 		}
 	}
 }
