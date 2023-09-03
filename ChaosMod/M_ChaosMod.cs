@@ -9,6 +9,7 @@ using Random = System.Random;
 using System.Collections;
 using System.Linq;
 using ChaosMod.Extensions;
+using System.Threading.Tasks;
 
 namespace ChaosMod
 {
@@ -91,6 +92,7 @@ namespace ChaosMod
 			// Player effects.
 			RegisterEffect(new Effects.Player.EffectFreeze());
 			RegisterEffect(new Effects.Player.EffectBhop());
+			RegisterEffect(new Effects.Player.EffectSuperFOV());
 
 			// Vehicle effects.
 			RegisterEffect(new Effects.Vehicle.EffectExitVehicle());
@@ -98,6 +100,11 @@ namespace ChaosMod
 			RegisterEffect(new Effects.Vehicle.EffectPopTires());
 			RegisterEffect(new Effects.Vehicle.EffectRandomiseCondition());
 			RegisterEffect(new Effects.Vehicle.EffectRandomiseColor());
+			RegisterEffect(new Effects.Vehicle.EffectSpammyDoors());
+			RegisterEffect(new Effects.Vehicle.EffectToggleHandbrake());
+			RegisterEffect(new Effects.Vehicle.EffectLights());
+			RegisterEffect(new Effects.Vehicle.EffectSpammyLights());
+			RegisterEffect(new Effects.Vehicle.EffectToggleIgnition());
 
 			// World effects.
 			RegisterEffect(new Effects.World.EffectLowGravity());
@@ -105,6 +112,7 @@ namespace ChaosMod
 			RegisterEffect(new Effects.World.EffectRandomiseTime());
 			RegisterEffect(new Effects.World.EffectRainingShit());
 			RegisterEffect(new Effects.World.EffectSpawnRandomVehicle());
+			RegisterEffect(new Effects.World.EffectMunkasInvasion());
 		}
 
 		/// <summary>
