@@ -15,24 +15,37 @@ namespace ChaosMod.Effects.Vehicle
 
 		public override void Trigger()
 		{
-			if (mainscript.M.player.lastCar != null)
+			if (mainscript.M.player.Car != null)
 			{
 				carscript carscript = mainscript.M.player.lastCar;
 				GameObject car = carscript.gameObject;
 				List<partslotscript> slots = new List<partslotscript>();
 				foreach (partslotscript slot in car.GetComponentsInChildren<partslotscript>())
 				{
-					slots.Add(slot);
-					FindAllParts(slot, ref slots);
+					if (slot.part != null)
+					{
+						slots.Add(slot);
+						FindAllParts(slot, ref slots);
+					}
 				}
 
 				foreach (partslotscript slot in slots)
 				{
-					if (slot.tipus.Contains("gumi"))
+					if (slot.tipus[0] == "gumi" && slot.part != null)
 					{
-						Vector3 position = slot.part.gameObject.transform.position;
-						slot.part.FallOFf();
-						carscript.RB.AddForceAtPosition(new Vector3(0f, 1500f, 0f), position, ForceMode.Impulse);
+						if (slot.part.gameObject != null)
+						{
+							GameObject part = slot.part.gameObject;
+							Vector3 position = part.transform.position;
+							slot.part.FallOFf();
+							tosaveitemscript save = part.GetComponent<tosaveitemscript>();
+							if (save != null)
+							{
+								save.removeFromMemory = true;
+							}
+							UnityEngine.Object.Destroy(part.transform.root.gameObject);
+							carscript.RB.AddForceAtPosition(new Vector3(0f, 1500f, 0f), position, ForceMode.Impulse);
+						}
 					}
 				}
 			}

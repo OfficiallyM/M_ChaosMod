@@ -19,7 +19,7 @@ namespace ChaosMod.Effects.World
 
 		public override void Trigger()
 		{
-			Physics.gravity = new Vector3(0, 2f, 0);
+			Physics.gravity = new Vector3(0, 1.25f, 0);
 		}
 
 		public override void End()

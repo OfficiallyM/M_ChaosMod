@@ -14,7 +14,7 @@ namespace ChaosMod.Effects.Vehicle
 
 		public override void Trigger()
 		{
-			if (mainscript.M.player.lastCar != null || mainscript.M.player.Car != null)
+			if (mainscript.M.player.Car != null)
 			{
 				mainscript.M.player.SwitchToCockpitView(true);
 				mainscript.M.player.GetOut(mainscript.M.player.transform.position + mainscript.M.player.transform.up * 2f, true);

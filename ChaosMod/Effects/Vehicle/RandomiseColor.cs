@@ -19,12 +19,17 @@ namespace ChaosMod.Effects.Vehicle
 			{
 				carscript carscript = mainscript.M.player.lastCar;
 				GameObject car = carscript.gameObject;
-				partconditionscript partconditionscript = car.GetComponent<partconditionscript>();
+
 				Color color = new Color();
 				color.r = UnityEngine.Random.Range(0f, 255f) / 255f;
 				color.g = UnityEngine.Random.Range(0f, 255f) / 255f;
 				color.b = UnityEngine.Random.Range(0f, 255f) / 255f;
-				Paint(color, partconditionscript);
+
+				partconditionscript[] partconditionscripts = car.GetComponentsInChildren<partconditionscript>();
+				foreach (partconditionscript partconditionscript in partconditionscripts)
+				{
+					partconditionscript.Paint(color);
+				}
 			}
 		}
 

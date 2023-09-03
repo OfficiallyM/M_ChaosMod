@@ -14,9 +14,9 @@ namespace ChaosMod.Effects.Vehicle
 
 		public override void Trigger()
 		{
-			if (mainscript.M.player.lastCar != null)
+			if (mainscript.M.player.Car != null)
 			{
-				carscript car = mainscript.M.player.lastCar;
+				carscript car = mainscript.M.player.Car;
 				tankscript tank = car.gameObject.GetComponentInChildren<tankscript>();
 				if (tank != null)
 				{

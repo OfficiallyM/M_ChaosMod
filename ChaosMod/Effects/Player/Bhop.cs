@@ -16,7 +16,10 @@ namespace ChaosMod.Effects.Player
 
 		public override void Trigger()
 		{
-			mainscript.M.player.AJump();
+			if (mainscript.M.player.Car == null)
+			{
+				mainscript.M.player.AJump();
+			}
 		}
 	}
 }
