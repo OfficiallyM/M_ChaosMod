@@ -28,13 +28,13 @@ namespace ChaosMod.Effects.World
 			color.b = UnityEngine.Random.Range(0f, 255f) / 255f;
 
 			int index = UnityEngine.Random.Range(0, vehicles.Count);
-			Spawn(vehicles[index], color, true, 0, -1);
+			Spawn(vehicles[index], color);
 		}
 
 		/// <summary>
 		/// Based off mainscript Spawn method
 		/// </summary>
-		private void Spawn(GameObject gameObject, Color color, bool fullRandom, int condition, int variant)
+		private void Spawn(GameObject gameObject, Color color)
 		{
 			GameObject spawned = UnityEngine.Object.Instantiate(gameObject, mainscript.M.player.transform.position + (mainscript.M.player.transform.forward * 4f) + (Vector3.up * 0.75f), Quaternion.FromToRotation(Vector3.forward, -mainscript.M.player.transform.right));
 			partconditionscript component1 = spawned.GetComponent<partconditionscript>();
@@ -42,26 +42,7 @@ namespace ChaosMod.Effects.World
 				component1 = spawned.GetComponent<childunparent>().g.GetComponent<partconditionscript>();
 			if (component1 != null)
 			{
-				if (variant != -1)
-				{
-					randomTypeSelector component2 = component1.GetComponent<randomTypeSelector>();
-					if (component2 != null)
-					{
-						component2.forceStart = false;
-						component2.rtipus = variant;
-						component2.Refresh();
-					}
-				}
-
-				if (fullRandom)
-				{
-					RandomiseCondition(component1);
-				}
-				else
-				{
-					component1.StartPaint(condition, color);
-				}
-
+				RandomiseCondition(component1);
 				Paint(color, component1);
 			}
 			mainscript.M.PostSpawn(spawned);
