@@ -10,7 +10,7 @@ namespace ChaosMod.Effects.World
 {
 	internal class EffectRainingShit : Effect
 	{
-		public override string Name => "it's raining shit";
+		public override string Name => "It's raining shit";
 		public override string Type => "repeated";
 		public override float Frequency => 0.5f;
 		public override float Length => 30f;
