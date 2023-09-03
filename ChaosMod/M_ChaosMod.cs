@@ -102,6 +102,9 @@ namespace ChaosMod
 			// World effects.
 			RegisterEffect(new Effects.World.EffectLowGravity());
 			RegisterEffect(new Effects.World.EffectNegativeGravity());
+			RegisterEffect(new Effects.World.EffectRandomiseTime());
+			RegisterEffect(new Effects.World.EffectRainingShit());
+			RegisterEffect(new Effects.World.EffectSpawnRandomVehicle());
 		}
 
 		/// <summary>
