@@ -242,6 +242,7 @@ namespace ChaosMod
 				return;
 
 			// Trigger active effects.
+			List<ActiveEffect> removeQueue = new List<ActiveEffect>();
 			foreach (ActiveEffect active in activeEffects)
 			{
 				active.Remaining -= Time.deltaTime;
@@ -249,7 +250,7 @@ namespace ChaosMod
 
 				if (active.Remaining <= 0)
 				{
-					activeEffects.Remove(active);
+					removeQueue.Add(active);
 					active.Effect.End();
 					expired = true;
 				}
@@ -264,6 +265,13 @@ namespace ChaosMod
 					}
 				}
 			}
+
+			// Clear any expired active effects.
+			foreach (ActiveEffect active in removeQueue)
+			{
+				activeEffects.Remove(active);
+			}
+			removeQueue.Clear();
 
 			effectDelay -= Time.deltaTime;
 			if (effectDelay <= 0)
