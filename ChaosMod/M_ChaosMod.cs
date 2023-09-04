@@ -90,32 +90,32 @@ namespace ChaosMod
 
 			// Register core effects.
 			// Player effects.
-			//RegisterEffect(new Effects.Player.EffectFreeze());
-			//RegisterEffect(new Effects.Player.EffectBhop());
-			//RegisterEffect(new Effects.Player.EffectSuperFOV());
+			RegisterEffect(new Effects.Player.EffectFreeze());
+			RegisterEffect(new Effects.Player.EffectBhop());
+			RegisterEffect(new Effects.Player.EffectSuperFOV());
 
 			// Vehicle effects.
-			//RegisterEffect(new Effects.Vehicle.EffectExitVehicle());
-			//RegisterEffect(new Effects.Vehicle.EffectEmptyFuel());
-			//RegisterEffect(new Effects.Vehicle.EffectPopTires());
-			//RegisterEffect(new Effects.Vehicle.EffectRandomiseCondition());
-			//RegisterEffect(new Effects.Vehicle.EffectRandomiseColor());
-			//RegisterEffect(new Effects.Vehicle.EffectSpammyDoors());
-			//RegisterEffect(new Effects.Vehicle.EffectToggleHandbrake());
-			//RegisterEffect(new Effects.Vehicle.EffectLights());
-			//RegisterEffect(new Effects.Vehicle.EffectSpammyLights());
-			//RegisterEffect(new Effects.Vehicle.EffectToggleIgnition());
-			//RegisterEffect(new Effects.Vehicle.EffectDropParts());
-			//RegisterEffect(new Effects.Vehicle.EffectEssentials());
+			RegisterEffect(new Effects.Vehicle.EffectExitVehicle());
+			RegisterEffect(new Effects.Vehicle.EffectEmptyFuel());
+			RegisterEffect(new Effects.Vehicle.EffectPopTires());
+			RegisterEffect(new Effects.Vehicle.EffectRandomiseCondition());
+			RegisterEffect(new Effects.Vehicle.EffectRandomiseColor());
+			RegisterEffect(new Effects.Vehicle.EffectSpammyDoors());
+			RegisterEffect(new Effects.Vehicle.EffectToggleHandbrake());
+			RegisterEffect(new Effects.Vehicle.EffectLights());
+			RegisterEffect(new Effects.Vehicle.EffectSpammyLights());
+			RegisterEffect(new Effects.Vehicle.EffectToggleIgnition());
+			RegisterEffect(new Effects.Vehicle.EffectDropParts());
+			RegisterEffect(new Effects.Vehicle.EffectEssentials());
 
 			// World effects.
-			//RegisterEffect(new Effects.World.EffectLowGravity());
-			//RegisterEffect(new Effects.World.EffectNegativeGravity());
-			//RegisterEffect(new Effects.World.EffectRandomiseTime());
-			//RegisterEffect(new Effects.World.EffectRainingShit());
-			//RegisterEffect(new Effects.World.EffectSpawnRandomVehicle());
-			//RegisterEffect(new Effects.World.EffectMunkasInvasion());
-			//RegisterEffect(new Effects.World.EffectRabbits());
+			RegisterEffect(new Effects.World.EffectLowGravity());
+			RegisterEffect(new Effects.World.EffectNegativeGravity());
+			RegisterEffect(new Effects.World.EffectRandomiseTime());
+			RegisterEffect(new Effects.World.EffectRainingShit());
+			RegisterEffect(new Effects.World.EffectSpawnRandomVehicle());
+			RegisterEffect(new Effects.World.EffectMunkasInvasion());
+			RegisterEffect(new Effects.World.EffectRabbits());
 			RegisterEffect(new Effects.World.EffectUFOs());
 			RegisterEffect(new Effects.World.EffectSandstorms());
 		}
