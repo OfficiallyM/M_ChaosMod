@@ -93,6 +93,7 @@ namespace ChaosMod
 			RegisterEffect(new Effects.Player.EffectFreeze());
 			RegisterEffect(new Effects.Player.EffectBhop());
 			RegisterEffect(new Effects.Player.EffectSuperFOV());
+			RegisterEffect(new Effects.Player.EffectWobblyHead());
 
 			// Vehicle effects.
 			RegisterEffect(new Effects.Vehicle.EffectExitVehicle());
