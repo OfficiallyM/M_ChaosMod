@@ -66,7 +66,12 @@ namespace ChaosMod
 		private List<EffectHistory> effectHistory = new List<EffectHistory>();
 		private List<ActiveEffect> activeEffects = new List<ActiveEffect>();
 		private float baseEffectDelay = 30f;
+		private float currentEffectDelay = 0f;
 		private float effectDelay = 0f;
+
+		// Meta effects.
+		private bool noChaos = false;
+		private bool hideUI = false;
 
 		public override void OnLoad()
 		{
@@ -85,8 +90,15 @@ namespace ChaosMod
 
 			// Set starting values.
 			messageTime = messageMaxTime;
-			effectDelay = baseEffectDelay;
+			currentEffectDelay = baseEffectDelay;
+			effectDelay = currentEffectDelay;
 			effectHistoryY = baseEffectHistoryY;
+
+			// Register meta effects.
+			RegisterEffect(new Effects.Meta.MetaNoChaos());
+			RegisterEffect(new Effects.Meta.Meta2xTimer());
+			RegisterEffect(new Effects.Meta.Meta5xTimer());
+			RegisterEffect(new Effects.Meta.MetaHideUI());
 
 			// Register core effects.
 			// Player effects.
@@ -154,12 +166,15 @@ namespace ChaosMod
 			}
 
 			// Main UI rendering.
-			if (enabled && !mainscript.M.menu.Menu.activeSelf)
+			if (enabled && !mainscript.M.menu.Menu.activeSelf && !hideUI)
 			{
-				GUI.Box(new Rect(0, 0, resolutionX, 30f), string.Empty, timerBackground);
-				float barFill = effectDelay / baseEffectDelay;
-				GUI.Box(new Rect(0, 0, resolutionX - (resolutionX * barFill), 30f), string.Empty, timerBar);
-				GUI.Label(new Rect(0, 0, resolutionX, 30f), $"{Mathf.RoundToInt(effectDelay)}s", timerText);
+				if (!noChaos)
+				{
+					GUI.Box(new Rect(0, 0, resolutionX, 30f), string.Empty, timerBackground);
+					float barFill = effectDelay / currentEffectDelay;
+					GUI.Box(new Rect(0, 0, resolutionX - (resolutionX * barFill), 30f), string.Empty, timerBar);
+					GUI.Label(new Rect(0, 0, resolutionX, 30f), $"{Mathf.RoundToInt(effectDelay)}s", timerText);
+				}
 
 				// Render effect history.
 				if (effectHistory.Count != 0)
@@ -177,6 +192,13 @@ namespace ChaosMod
 						effectHistoryY += 50f;
 					}
 				}
+			}
+			else if (hideUI)
+			{
+				effectHistoryY = baseEffectHistoryY;
+				GUIExtensions.DrawOutline(new Rect(resolutionX - 450f, effectHistoryY, 400f, resolutionY - baseEffectHistoryY), "<b>Effect history:</b>", effectStyle, Color.black);
+				effectHistoryY += 25f;
+				GUIExtensions.DrawOutline(new Rect(resolutionX - 450f, effectHistoryY, 400f, resolutionY - baseEffectHistoryY), effectHistory.Where(e => e.Effect.GetType().Name == "MetaHideUI").FirstOrDefault().Effect.Name, effectStyle, Color.black);
 			}
 		}
 
@@ -213,7 +235,7 @@ namespace ChaosMod
 				if (!enabled)
 				{
 					DisableActiveEffects();
-					effectDelay = baseEffectDelay;
+					effectDelay = currentEffectDelay;
 					message = $"Chaos mod v{Meta.Version} by M- disabled";
 					messageStyle.normal.textColor = new Color(100, 0, 0);
 				}
@@ -226,7 +248,8 @@ namespace ChaosMod
 				// Reset everything to defaults.
 				activeEffects.Clear();
 				effectHistory.Clear();
-				effectDelay = baseEffectDelay;
+				currentEffectDelay = baseEffectDelay;
+				effectDelay = currentEffectDelay;
 				enabled = false;
 
 				message = $"Chaos mod has been reset";
@@ -254,6 +277,25 @@ namespace ChaosMod
 					removeQueue.Add(active);
 					active.Effect.End();
 					expired = true;
+
+					if (active.Effect.Type == "meta")
+					{
+						switch (active.Effect.GetType().Name)
+						{
+							case "MetaNoChaos":
+								noChaos = false;
+								break;
+							case "Meta2xTimer":
+								currentEffectDelay = baseEffectDelay;
+								break;
+							case "Meta5xTimer":
+								currentEffectDelay = baseEffectDelay;
+								break;
+							case "MetaHideUI":
+								hideUI = false;
+								break;
+						}
+					}
 				}
 
 				if (active.Effect.Type == "repeated" && !expired)
@@ -273,6 +315,10 @@ namespace ChaosMod
 				activeEffects.Remove(active);
 			}
 			removeQueue.Clear();
+
+			// Return early if no chaos is active.
+			if (noChaos)
+				return;
 
 			effectDelay -= Time.deltaTime;
 			if (effectDelay <= 0)
@@ -349,6 +395,32 @@ namespace ChaosMod
 							logger.Log($"Effect {effect.Name} errored during trigger and will be disabled. Error - {ex}", Logger.LogLevel.Error);
 						}
 						break;
+					case "meta":
+						switch (effect.GetType().Name)
+						{
+							case "MetaNoChaos":
+								noChaos = true;
+								// Disable any existing effects.
+								DisableActiveEffects();
+								break;
+							case "Meta2xTimer":
+								currentEffectDelay = baseEffectDelay / 2;
+								break;
+							case "Meta5xTimer":
+								currentEffectDelay = baseEffectDelay / 5;
+								break;
+							case "MetaHideUI":
+								hideUI = true;
+								break;
+						};
+						activeEffect = new ActiveEffect()
+						{
+							Effect = effect,
+							Remaining = effect.Length,
+						};
+						activeEffects.Add(activeEffect);
+
+						break;
 				}
 
 				if (addToHistory)
@@ -358,7 +430,7 @@ namespace ChaosMod
 						ActiveEffect = activeEffect,
 					});
 
-				effectDelay = baseEffectDelay;
+				effectDelay = currentEffectDelay;
 			}
 		}
 
