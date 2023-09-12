@@ -24,7 +24,7 @@ namespace ChaosMod.Core
 		/// <summary>
 		/// Only required if Type is repeated.
 		/// </summary>
-		public virtual float Frequency { get { return 0; } }
+		public virtual float Frequency { get { return -1; } }
 
 		/// <summary>
 		/// Called once if Type is instant or timed or at the Frequency interval for repeated.

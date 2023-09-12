@@ -347,7 +347,7 @@ namespace ChaosMod
 					case "timed":
 						try
 						{
-							if (effect.Length != 0)
+							if (effect.Length > 0)
 							{
 								activeEffect = new ActiveEffect()
 								{
@@ -372,7 +372,7 @@ namespace ChaosMod
 					case "repeated":
 						try
 						{
-							if (effect.Length != 0 && effect.Frequency != 0)
+							if (effect.Length > 0 && effect.Frequency >= 0)
 							{
 								activeEffect = new ActiveEffect()
 								{
