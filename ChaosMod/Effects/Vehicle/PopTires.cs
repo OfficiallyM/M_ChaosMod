@@ -25,7 +25,7 @@ namespace ChaosMod.Effects.Vehicle
 					if (slot.part != null)
 					{
 						slots.Add(slot);
-						FindAllParts(slot, ref slots);
+						Modules.Utilities.Game.FindAllParts(slot, ref slots);
 					}
 				}
 
@@ -47,24 +47,6 @@ namespace ChaosMod.Effects.Vehicle
 							carscript.RB.AddForceAtPosition(new Vector3(0f, 1500f, 0f), position, ForceMode.Impulse);
 						}
 					}
-				}
-			}
-		}
-
-		/// <summary>
-		/// Recursively find all populated part slots
-		/// </summary>
-		/// <param name="slot">The slot to search through</param>
-		/// <param name="allChildren">The existing parts list</param>
-		private void FindAllParts(partslotscript slot, ref List<partslotscript> allChildren)
-		{
-			if (slot.part != null)
-			{
-				allChildren.Add(slot);
-
-				foreach (var subslot in slot.part.tosaveitem.partslotscripts)
-				{
-					FindAllParts(subslot, ref allChildren);
 				}
 			}
 		}

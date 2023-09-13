@@ -20,37 +20,7 @@ namespace ChaosMod.Effects.Vehicle
 				carscript carscript = mainscript.M.player.lastCar;
 				GameObject car = carscript.gameObject;
 				partconditionscript[] partconditionscripts = car.GetComponentsInChildren<partconditionscript>();
-				RandomiseCondition(partconditionscripts);
-			}
-		}
-
-		/// <summary>
-		/// Randomise condition of all parts.
-		/// </summary>
-		/// <param name="partconditionscripts">Array of partconditionscripts</param>
-		private void RandomiseCondition(partconditionscript[] partconditionscripts)
-		{
-			foreach (partconditionscript child in partconditionscripts)
-			{
-				if (child.gameObject != null)
-				{
-					child.RandomState(0, 4);
-					child.Refresh();
-				}
-			}
-		}
-
-		/// <summary>
-		/// Recursively find all child parts.
-		/// </summary>
-		/// <param name="root">Parent part</param>
-		/// <param name="allChildren">Current list of child parts</param>
-		private void FindPartChildren(partconditionscript root, ref List<partconditionscript> allChildren)
-		{
-			foreach (partconditionscript child in root.childs)
-			{
-				allChildren.Add(child);
-				FindPartChildren(child, ref allChildren);
+				Modules.Utilities.Game.RandomiseCondition(partconditionscripts);
 			}
 		}
 	}

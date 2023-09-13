@@ -4,11 +4,11 @@ using TLDLoader;
 using UnityEngine;
 using ChaosMod.Core;
 using ChaosMod.Modules;
+using ChaosMod.Extensions;
 using Logger = ChaosMod.Modules.Logger;
 using Random = System.Random;
 using System.Collections;
 using System.Linq;
-using ChaosMod.Extensions;
 using System.Threading.Tasks;
 
 namespace ChaosMod
@@ -161,8 +161,8 @@ namespace ChaosMod
 			{
 				timerBackground = new GUIStyle(GUI.skin.box);
 				timerBar = new GUIStyle(GUI.skin.box);
-				timerBackground.normal.background = ColorTexture(2, 2, new Color(175, 175, 175));
-				timerBar.normal.background = ColorTexture(2, 2, new Color(200, 0, 80));
+				timerBackground.normal.background = Modules.Utilities.GUI.ColorTexture(2, 2, new Color(175, 175, 175));
+				timerBar.normal.background = Modules.Utilities.GUI.ColorTexture(2, 2, new Color(200, 0, 80));
 			}
 
 			// Messaging.
@@ -212,26 +212,6 @@ namespace ChaosMod
 				effectHistoryY += 25f;
 				GUIExtensions.DrawOutline(new Rect(resolutionX - 450f, effectHistoryY, 400f, resolutionY - baseEffectHistoryY), effectHistory.Where(e => e.Effect.GetType().Name == "MetaHideUI").FirstOrDefault().Effect.Name, effectStyle, Color.black);
 			}
-		}
-
-		/// <summary>
-		/// Create a colored texture.
-		/// </summary>
-		/// <param name="width">Texture width</param>
-		/// <param name="height">Texture height</param>
-		/// <param name="color">Texture color</param>
-		/// <returns>Texture</returns>
-		private Texture2D ColorTexture(int width, int height, Color color)
-		{
-			Color[] pixels = new Color[width * height];
-			for (int i = 0; i < pixels.Length; i++)
-			{
-				pixels[i] = color;
-			}
-			Texture2D texture = new Texture2D(width, height);
-			texture.SetPixels(pixels);
-			texture.Apply();
-			return texture;
 		}
 
 		public override void Update()

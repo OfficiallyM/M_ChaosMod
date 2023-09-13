@@ -32,20 +32,5 @@ namespace ChaosMod.Effects.Vehicle
 				}
 			}
 		}
-
-		/// <summary>
-		/// Paint all child parts of a vehicle.
-		/// </summary>
-		/// <param name="c">The colour to paint</param>
-		/// <param name="partconditionscript">The root vehicle partconditionscript</param>
-		private void Paint(Color c, partconditionscript partconditionscript)
-		{
-			partconditionscript.Paint(c);
-			foreach (partconditionscript child in partconditionscript.childs)
-			{
-				if (!child.isChild && !child.loaded)
-					Paint(c, child);
-			}
-		}
 	}
 }

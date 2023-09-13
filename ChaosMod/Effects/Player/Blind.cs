@@ -31,23 +31,10 @@ namespace ChaosMod.Effects.Player
 			if (style == null)
 			{
 				style = new GUIStyle(GUI.skin.box);
-				style.normal.background = ColorTexture(2, 2, new Color(0, 0, 0));
+				style.normal.background = Modules.Utilities.GUI.ColorTexture(2, 2, new Color(0, 0, 0));
 			}
 
 			GUI.Box(new Rect(0, 0, resolutionX, resolutionY), string.Empty, style);
-		}
-
-		private Texture2D ColorTexture(int width, int height, Color color)
-		{
-			Color[] pixels = new Color[width * height];
-			for (int i = 0; i < pixels.Length; i++)
-			{
-				pixels[i] = color;
-			}
-			Texture2D texture = new Texture2D(width, height);
-			texture.SetPixels(pixels);
-			texture.Apply();
-			return texture;
 		}
 	}
 }
