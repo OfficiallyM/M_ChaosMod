@@ -27,6 +27,11 @@ namespace ChaosMod.Core
 		public virtual float Frequency { get { return -1; } }
 
 		/// <summary>
+		/// Whether OnGUI should be called.
+		/// </summary>
+		public virtual bool UseGUI { get { return false; } }
+
+		/// <summary>
 		/// Called once if Type is instant or timed or at the Frequency interval for repeated.
 		/// </summary>
 		public virtual void Trigger() { }
@@ -35,6 +40,11 @@ namespace ChaosMod.Core
 		/// Only called if Type is timed or repeated. Called after the length elapses.
 		/// </summary>
 		public virtual void End() { }
+
+		/// <summary>
+		/// Unity OnGUI method. Only called if UseGUI is true.
+		/// </summary>
+		public virtual void OnGUI() { }
 	}
 
 	public class EffectHistory
