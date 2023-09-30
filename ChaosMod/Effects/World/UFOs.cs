@@ -21,6 +21,9 @@ namespace ChaosMod.Effects.World
 			if (temp == null)
 				return;
 
+			if (temp.FEDOSPAWN == null)
+				return;
+
 			temp.FEDOSPAWN.DoSpawn();
 		}
 	}
