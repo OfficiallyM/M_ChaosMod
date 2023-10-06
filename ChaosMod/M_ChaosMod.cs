@@ -121,6 +121,7 @@ namespace ChaosMod
 			RegisterEffect(new Effects.Vehicle.EffectToggleIgnition());
 			RegisterEffect(new Effects.Vehicle.EffectDropParts());
 			RegisterEffect(new Effects.Vehicle.EffectEssentials());
+			//RegisterEffect(new Effects.Vehicle.EffectReplaceWheels()); // TODO: Get working
 
 			// World effects.
 			RegisterEffect(new Effects.World.EffectLowGravity());
@@ -132,6 +133,7 @@ namespace ChaosMod
 			RegisterEffect(new Effects.World.EffectRabbits());
 			RegisterEffect(new Effects.World.EffectUFOs());
 			RegisterEffect(new Effects.World.EffectSandstorms());
+			RegisterEffect(new Effects.World.EffectRoadVanish());
 		}
 
 		/// <summary>
