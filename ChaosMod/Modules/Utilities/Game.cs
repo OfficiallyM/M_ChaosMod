@@ -91,7 +91,7 @@ namespace ChaosMod.Modules.Utilities
 		}
 
 		/// <summary>
-		/// Recursively find all populated part slots
+		/// Recursively find all populated part slots.
 		/// </summary>
 		/// <param name="slot">The slot to search through</param>
 		/// <param name="allChildren">The existing parts list</param>
@@ -107,5 +107,47 @@ namespace ChaosMod.Modules.Utilities
 				}
 			}
 		}
+
+		/// <summary>
+		/// Recursively find all populated part slots.
+		/// </summary>
+		/// <param name="car">The car</param>
+		/// <returns>List of populated slots</returns>
+		public static List<partslotscript> FindAllParts(carscript car)
+		{
+			List<partslotscript> slots = new List<partslotscript>();
+			foreach (partslotscript slot in car.GetComponentsInChildren<partslotscript>())
+			{
+				if (slot.part != null)
+				{
+					slots.Add(slot);
+					FindAllParts(slot, ref slots);
+				}
+			}
+
+			return slots;
+		}
+
+		/// <summary>
+		/// Wrapper for UnityEngine.Object.Destroy that handles removing object from save memory.
+		/// </summary>
+		/// <param name="obj">The object to destroy</param>
+		public static void Destroy(GameObject obj)
+		{
+			if (obj == null) return;
+
+			tosaveitemscript save = obj.GetComponent<tosaveitemscript>();
+            if (save != null)
+            {
+				save.removeFromMemory = true;
+
+				foreach (tosaveitemscript component in obj.transform.root.GetComponentsInChildren<tosaveitemscript>())
+				{
+					component.removeFromMemory = true;
+				}
+			}
+
+			UnityEngine.Object.Destroy(obj.transform.root.gameObject);
+        }
 	}
 }
