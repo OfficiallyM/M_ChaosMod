@@ -73,6 +73,9 @@ namespace ChaosMod
 		private bool noChaos = false;
 		private bool hideUI = false;
 
+		// Effect-specific variables.
+		private GameObject roadParent = null;
+
 		public override void OnLoad()
 		{
 			resolutionX = mainscript.M.SettingObj.S.IResolutionX;
@@ -93,6 +96,8 @@ namespace ChaosMod
 			currentEffectDelay = baseEffectDelay;
 			effectDelay = currentEffectDelay;
 			effectHistoryY = baseEffectHistoryY;
+
+			roadParent = GameObject.Find("G_RoadParent");
 
 			// Register meta effects.
 			RegisterEffect(new Effects.Meta.MetaNoChaos());
@@ -133,7 +138,7 @@ namespace ChaosMod
 			RegisterEffect(new Effects.World.EffectRabbits());
 			RegisterEffect(new Effects.World.EffectUFOs());
 			RegisterEffect(new Effects.World.EffectSandstorms());
-			RegisterEffect(new Effects.World.EffectRoadVanish());
+			RegisterEffect(new Effects.World.EffectRoadVanish(roadParent));
 		}
 
 		/// <summary>

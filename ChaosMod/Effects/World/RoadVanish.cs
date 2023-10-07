@@ -15,15 +15,20 @@ namespace ChaosMod.Effects.World
 		public override float Length => 60f;
 
 		private GameObject roadParent = null;
+
+		public EffectRoadVanish(GameObject _roadParent)
+		{
+			roadParent = _roadParent;
+		}
+
 		public override void Trigger()
 		{
-			roadParent = GameObject.Find("G_RoadParent");
 			roadParent.SetActive(false);
 		}
 
 		public override void End()
 		{
-			roadParent?.SetActive(true);
+			roadParent.SetActive(true);
 		}
 	}
 }
