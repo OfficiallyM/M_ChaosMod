@@ -6,10 +6,12 @@ using ChaosMod.Core;
 using ChaosMod.Modules;
 using ChaosMod.Extensions;
 using Logger = ChaosMod.Modules.Logger;
+using Config = ChaosMod.Modules.Config;
 using Random = System.Random;
 using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
+using Settings = ChaosMod.Core.Settings;
 
 namespace ChaosMod
 {
@@ -22,12 +24,13 @@ namespace ChaosMod
 		public override string Version => Meta.Version;
 
 		// Initialise modules.
-		private readonly Logger logger = new Logger();
+		private readonly Config config;
+		private readonly Keybinds binds;
+
+		private Settings settings = new Settings();
 
 		// Mod control.
 		private bool enabled = false;
-		private KeyCode toggleBind = KeyCode.F2;
-		private KeyCode resetBind = KeyCode.F3;
 
 		// GUI.
 		private int resolutionX = 0;
@@ -63,11 +66,9 @@ namespace ChaosMod
 
 		// Effect control.
 		private List<Effect> effects = new List<Effect>();
+		private List<Effect> enabledEffects = new List<Effect>();
 		private List<EffectHistory> effectHistory = new List<EffectHistory>();
 		private List<ActiveEffect> activeEffects = new List<ActiveEffect>();
-		private float baseEffectDelay = 30f;
-		private float currentEffectDelay = 0f;
-		private float effectDelay = 0f;
 
 		// Meta effects.
 		private bool noChaos = false;
@@ -75,6 +76,20 @@ namespace ChaosMod
 
 		// Effect-specific variables.
 		private GameObject roadParent = null;
+
+		public ChaosMod()
+		{
+			try
+			{
+				Logger.Init();
+				config = new Config();
+				binds = new Keybinds(config);
+			}
+			catch (Exception ex)
+			{
+				Logger.Log($"Module initialisation failed - {ex}", Logger.LogLevel.Critical);
+			}
+		}
 
 		public override void OnLoad()
 		{
@@ -93,12 +108,22 @@ namespace ChaosMod
 
 			// Set starting values.
 			messageTime = messageMaxTime;
-			currentEffectDelay = baseEffectDelay;
-			effectDelay = currentEffectDelay;
 			effectHistoryY = baseEffectHistoryY;
 
 			roadParent = GameObject.Find("G_RoadParent");
 
+			RegisterCoreEffects();
+
+			// Load modules.
+			config.Initialise(ModLoader.GetModConfigFolder(this) + "\\Config.json", effects, enabledEffects);
+			binds.OnLoad();
+		}
+
+		/// <summary>
+		/// Register all default effects.
+		/// </summary>
+		internal void RegisterCoreEffects()
+		{
 			// Register meta effects.
 			RegisterEffect(new Effects.Meta.MetaNoChaos());
 			RegisterEffect(new Effects.Meta.Meta2xTimer());
@@ -148,10 +173,18 @@ namespace ChaosMod
 		public void RegisterEffect(Effect effect)
 		{
 			effects.Add(effect);
+
+			if (!effect.DisabledByDefault)
+				enabledEffects.Add(effect);
 		}
 
 		public override void OnGUI()
 		{
+			if (mainscript.M.menu.Menu.activeSelf)
+			{
+				binds.RenderRebindMenu("Chaos mod binds", new int[] {0, 1, 2, 3}, resolutionX - 350f, 200f);
+			}
+
 			// Call GUI for any active effects with GUI enabled.
 			// This is called first so it's first in the GUI stack.
 			// This stops effects from drawing over the Chaos Mod UI.
@@ -190,9 +223,9 @@ namespace ChaosMod
 				if (!noChaos)
 				{
 					GUI.Box(new Rect(0, 0, resolutionX, 30f), string.Empty, timerBackground);
-					float barFill = effectDelay / currentEffectDelay;
+					float barFill = settings.effectDelay / settings.currentEffectDelay;
 					GUI.Box(new Rect(0, 0, resolutionX - (resolutionX * barFill), 30f), string.Empty, timerBar);
-					GUI.Label(new Rect(0, 0, resolutionX, 30f), $"{Mathf.RoundToInt(effectDelay)}s", timerText);
+					GUI.Label(new Rect(0, 0, resolutionX, 30f), $"{Mathf.RoundToInt(settings.effectDelay)}s", timerText);
 				}
 
 				// Render effect history.
@@ -219,49 +252,69 @@ namespace ChaosMod
 				effectHistoryY += 25f;
 				GUIExtensions.DrawOutline(new Rect(resolutionX - 450f, effectHistoryY, 400f, resolutionY - baseEffectHistoryY), effectHistory.Where(e => e.Effect.GetType().Name == "MetaHideUI").FirstOrDefault().Effect.Name, effectStyle, Color.black);
 			}
+
+			// Render config GUI last ensure it's always on top.
+			config.OnGUI();
 		}
 
 		public override void Update()
 		{
 			// Keybinds.
-			if (Input.GetKeyDown(toggleBind))
+			if (binds.IsActionDown(Keybinds.Inputs.toggle))
 			{
 				enabled = !enabled;
 
 				messageStyle.normal.textColor = new Color(0, 100, 0);
 				message = $"Chaos mod v{Meta.Version} by M- enabled";
 				message += $"\nLoaded {effects.Count} effects";
+				message += $"\n {settings.enabledEffects.Count} effects enabled";
 				if (!enabled)
 				{
 					DisableActiveEffects();
-					effectDelay = currentEffectDelay;
+					settings.effectDelay = settings.currentEffectDelay;
 					message = $"Chaos mod v{Meta.Version} by M- disabled";
 					messageStyle.normal.textColor = new Color(100, 0, 0);
 				}
 			}
 
-			if (Input.GetKeyDown(resetBind))
+			if (binds.IsActionDown(Keybinds.Inputs.reset))
 			{
 				DisableActiveEffects();
 
 				// Reset everything to defaults.
 				activeEffects.Clear();
 				effectHistory.Clear();
-				currentEffectDelay = baseEffectDelay;
-				effectDelay = currentEffectDelay;
+				settings.currentEffectDelay = settings.timerLength;
+				settings.effectDelay = settings.currentEffectDelay;
 				enabled = false;
+				noChaos = false;
+				hideUI = false;
 
 				message = $"Chaos mod has been reset";
 				messageColor = new Color(0, 0, 100);
 				messageStyle.normal.textColor = messageColor;
 			}
 
+			if (binds.IsActionDown(Keybinds.Inputs.config) && !mainscript.M.menu.Menu.activeSelf && !mainscript.M.settingsOpen && !mainscript.M.menu.saveScreen.gameObject.activeSelf)
+			{
+				config.ToggleShowConfig();
+			}
+
+			if (config.IsConfigActive() && !mainscript.M.menu.Menu.activeSelf && Input.GetButtonDown("Cancel"))
+			{
+				config.ToggleShowConfig(false);
+			}
+
 			// Return early if disabled.
 			if (!enabled)
 				return;
 
-			// Return early if no effects are loaded.
-			if (effects.Count == 0)
+			// Return early if no effects are enabled.
+			if (settings.enabledEffects.Count == 0)
+				return;
+
+			// Return early if config is open.
+			if (config.IsConfigActive())
 				return;
 
 			// Trigger active effects.
@@ -285,10 +338,10 @@ namespace ChaosMod
 								noChaos = false;
 								break;
 							case "Meta2xTimer":
-								currentEffectDelay = baseEffectDelay;
+								settings.currentEffectDelay = settings.timerLength;
 								break;
 							case "Meta5xTimer":
-								currentEffectDelay = baseEffectDelay;
+								settings.currentEffectDelay = settings.timerLength;
 								break;
 							case "MetaHideUI":
 								hideUI = false;
@@ -319,12 +372,12 @@ namespace ChaosMod
 			if (noChaos)
 				return;
 
-			effectDelay -= Time.deltaTime;
-			if (effectDelay <= 0)
+			settings.effectDelay -= Time.deltaTime;
+			if (settings.effectDelay <= 0)
 			{
 				// Trigger effect.
-				int index = UnityEngine.Random.Range(0, effects.Count);
-				Effect effect = effects[index];
+				int index = UnityEngine.Random.Range(0, settings.enabledEffects.Count);
+				Effect effect = settings.enabledEffects[index];
 				bool addToHistory = true;
 
 				ActiveEffect activeEffect = null;
@@ -338,7 +391,7 @@ namespace ChaosMod
 						}
 						catch (Exception ex)
 						{
-							logger.Log($"Effect {effect.Name} errored during trigger and will be disabled. Error - {ex}", Logger.LogLevel.Error);
+							Logger.Log($"Effect {effect.Name} errored during trigger and will be disabled. Error - {ex}", Logger.LogLevel.Error);
 							effects.Remove(effect);
 							addToHistory = false;
 						}
@@ -358,14 +411,14 @@ namespace ChaosMod
 							}
 							else
 							{
-								logger.Log($"Timed effect {effect.Name} has no Length so will be disabled.", Logger.LogLevel.Error);
+								Logger.Log($"Timed effect {effect.Name} has no Length so will be disabled.", Logger.LogLevel.Error);
 								effects.Remove(effect);
 								addToHistory = false;
 							}
 						}
 						catch (Exception ex)
 						{
-							logger.Log($"Effect {effect.Name} errored during trigger and will be disabled. Error - {ex}", Logger.LogLevel.Error);
+							Logger.Log($"Effect {effect.Name} errored during trigger and will be disabled. Error - {ex}", Logger.LogLevel.Error);
 						}
 						break;
 					case "repeated":
@@ -384,14 +437,14 @@ namespace ChaosMod
 							}
 							else
 							{
-								logger.Log($"Repeated effect {effect.Name} has no Length/Frequency so will be disabled.", Logger.LogLevel.Error);
+								Logger.Log($"Repeated effect {effect.Name} has no Length/Frequency so will be disabled.", Logger.LogLevel.Error);
 								effects.Remove(effect);
 								addToHistory = false;
 							}
 						}
 						catch (Exception ex)
 						{
-							logger.Log($"Effect {effect.Name} errored during trigger and will be disabled. Error - {ex}", Logger.LogLevel.Error);
+							Logger.Log($"Effect {effect.Name} errored during trigger and will be disabled. Error - {ex}", Logger.LogLevel.Error);
 						}
 						break;
 					case "meta":
@@ -403,10 +456,10 @@ namespace ChaosMod
 								DisableActiveEffects();
 								break;
 							case "Meta2xTimer":
-								currentEffectDelay = baseEffectDelay / 2;
+								settings.currentEffectDelay = settings.timerLength / 2;
 								break;
 							case "Meta5xTimer":
-								currentEffectDelay = baseEffectDelay / 5;
+								settings.currentEffectDelay = settings.timerLength / 5;
 								break;
 							case "MetaHideUI":
 								hideUI = true;
@@ -429,7 +482,7 @@ namespace ChaosMod
 						ActiveEffect = activeEffect,
 					});
 
-				effectDelay = currentEffectDelay;
+				settings.effectDelay = settings.currentEffectDelay;
 			}
 		}
 
@@ -448,7 +501,7 @@ namespace ChaosMod
 				}
 				catch (Exception ex)
 				{
-					logger.Log($"Failed to end effect {effect.Name} - {ex}", Logger.LogLevel.Error);
+					Logger.Log($"Failed to end effect {effect.Name} - {ex}", Logger.LogLevel.Error);
 				}
 			}
 		}

@@ -32,6 +32,11 @@ namespace ChaosMod.Core
 		public virtual bool UseGUI { get { return false; } }
 
 		/// <summary>
+		/// Whether the effect needs to be manually enabled.
+		/// </summary>
+		public virtual bool DisabledByDefault { get { return false; } }
+
+		/// <summary>
 		/// Called once if Type is instant or timed or at the Frequency interval for repeated.
 		/// </summary>
 		public virtual void Trigger() { }
