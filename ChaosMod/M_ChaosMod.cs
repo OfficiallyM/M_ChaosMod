@@ -158,6 +158,8 @@ namespace ChaosMod
 			//RegisterEffect(new Effects.Vehicle.EffectReplaceWheels()); // TODO: Get working
 			RegisterEffect(new Effects.Vehicle.EffectPristine());
 			RegisterEffect(new Effects.Vehicle.EffectRusty());
+			RegisterEffect(new Effects.Vehicle.EffectHalveRPM());
+			RegisterEffect(new Effects.Vehicle.EffectDoubleRPM());
 
 			// World effects.
 			RegisterEffect(new Effects.World.EffectLowGravity());
