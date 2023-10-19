@@ -56,29 +56,45 @@ namespace ChaosMod.Modules
 				// Load existing config.
 				config = GetConfig();
 
+				// Check all effects.
+				List<string> all = EffectsToConfig(effects);
+				List<string> newEffects = new List<string>();
+				if (config.allEffects == null || config.allEffects.Count == 0)
+					config.allEffects = all;
+				else
+					newEffects = all.Where(e => !config.allEffects.Any(e1 => e1 == e)).ToList();
+
+				foreach (string newEffect in newEffects)
+					config.allEffects.Add(newEffect);
+
 				// Check enabled effects.
 				List<string> enabled = EffectsToConfig(enabledEffects);
 				// No current value, set to default.
 				if (config.enabledEffects == null || config.enabledEffects.Count == 0)
 					config.enabledEffects = enabled;
 
-				// Check for new effects that should be enabled by default.
-				List<string> diff = config.enabledEffects.Where(e => !enabled.Any(e1 => e1 == e)).ToList();
-
-				if (diff.Count > 0)
+				// Check for new effects which should be enabled by default.
+				List<string> newEnabledEffects = enabled.Where(e => newEffects.Contains(e)).ToList();
+				if (newEnabledEffects.Count > 0)
 				{
-					foreach (string diffEffect in diff)
+					foreach (string newEffect in newEnabledEffects)
 					{
-						config.enabledEffects.Add(diffEffect);
+						config.enabledEffects.Add(newEffect);
 					}
 				}
 
+				// Set default timer length.
+				if (config.timerLength == null)
+					config.timerLength = settings.timerLength;
+
+				// Commit new configuration.
 				CommitConfiguration();
 
 				// Load defaults.
 				if (config.timerLength != null)
 					timerLength = config.timerLength.Value;
 
+				// Reload enabled effects.
 				enabledEffects = ConfigToEffects(config.enabledEffects);
 
 				// GUI stuff.

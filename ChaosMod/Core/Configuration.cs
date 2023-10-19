@@ -13,6 +13,7 @@ namespace ChaosMod.Core
 	{
 		[DataMember] public List<Key> keybinds { get; set; }
 		[DataMember] public List<string> enabledEffects { get; set; }
+		[DataMember] public List<string> allEffects { get; set; }
 		[DataMember] public float? timerLength { get; set; }
 	}
 
