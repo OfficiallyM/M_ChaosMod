@@ -167,6 +167,10 @@ namespace ChaosMod.Modules
 				UpdateConfig(new Configuration() { enabledEffects = EffectsToConfig(enabledEffects) });
 			}
 
+			x += 245f;
+
+			GUI.Label(new Rect(x, y, fieldWidth, fieldHeight), $"{enabledEffects.Count}/{effects.Count} enabled", labelStyle);
+
 			x = fieldX;
 			y += fieldHeight + 10f;
 
