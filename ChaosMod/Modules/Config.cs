@@ -47,53 +47,60 @@ namespace ChaosMod.Modules
 		/// <param name="_effects">Enabled effects list</param>
 		public void Initialise(string path, List<Effect> _effects, List<Effect> _enabledEffects)
 		{
-			configPath = path;
-			effects = _effects;
-			enabledEffects = _enabledEffects;
-
-			// Load existing config.
-			config = GetConfig();
-
-			// Check enabled effects.
-			List<string> enabled = EffectsToConfig(enabledEffects);
-			// No current value, set to default.
-			if (config.enabledEffects == null || config.enabledEffects.Count == 0)
-				config.enabledEffects = enabled;
-
-			// Check for new effects that should be enabled by default.
-			List<string> diff = config.enabledEffects.Where(e => !enabled.Any(e1 => e1 == e)).ToList();
-
-			if (diff.Count > 0)
+			try
 			{
-				foreach (string diffEffect in diff)
+				configPath = path;
+				effects = _effects;
+				enabledEffects = _enabledEffects;
+
+				// Load existing config.
+				config = GetConfig();
+
+				// Check enabled effects.
+				List<string> enabled = EffectsToConfig(enabledEffects);
+				// No current value, set to default.
+				if (config.enabledEffects == null || config.enabledEffects.Count == 0)
+					config.enabledEffects = enabled;
+
+				// Check for new effects that should be enabled by default.
+				List<string> diff = config.enabledEffects.Where(e => !enabled.Any(e1 => e1 == e)).ToList();
+
+				if (diff.Count > 0)
 				{
-					config.enabledEffects.Add(diffEffect);
+					foreach (string diffEffect in diff)
+					{
+						config.enabledEffects.Add(diffEffect);
+					}
 				}
+
+				CommitConfiguration();
+
+				// Load defaults.
+				if (config.timerLength != null)
+					timerLength = config.timerLength.Value;
+
+				enabledEffects = ConfigToEffects(config.enabledEffects);
+
+				// GUI stuff.
+				resolutionX = mainscript.M.SettingObj.S.IResolutionX;
+				resolutionY = mainscript.M.SettingObj.S.IResolutionY;
+
+				menuX = 10f;
+				menuY = 10f;
+				menuWidth = resolutionX * 0.25f;
+				menuHeight = resolutionY - 20f;
+
+				// Set label styling.
+				labelStyle.alignment = TextAnchor.UpperLeft;
+				labelStyle.normal.textColor = Color.white;
+
+				// Set settings.
+				UpdateSettings();
 			}
-
-			CommitConfiguration();
-
-			// Load defaults.
-			if (config.timerLength != null)
-				timerLength = config.timerLength.Value;
-
-			enabledEffects = ConfigToEffects(config.enabledEffects);
-
-			// GUI stuff.
-			resolutionX = mainscript.M.SettingObj.S.IResolutionX;
-			resolutionY = mainscript.M.SettingObj.S.IResolutionY;
-
-			menuX = 10f;
-			menuY = 10f;
-			menuWidth = resolutionX * 0.25f;
-			menuHeight = resolutionY - 20f;
-
-			// Set label styling.
-			labelStyle.alignment = TextAnchor.UpperLeft;
-			labelStyle.normal.textColor = Color.white;
-
-			// Set settings.
-			UpdateSettings();
+			catch (Exception ex)
+			{
+				Logger.Log($"Config initialisation failed - {ex}", Logger.LogLevel.Critical);
+			}
 		}
 
 		internal void OnGUI()
@@ -124,7 +131,7 @@ namespace ChaosMod.Modules
 
 			float scrollHeight = (configs * (fieldHeight + 10f)) + (effects.Count * (fieldHeight + 10f));
 
-			configScrollPosition = GUI.BeginScrollView(new Rect(x, y, menuWidth - 20f, menuHeight - 80f), configScrollPosition, new Rect(x, y, menuWidth - 20f, scrollHeight), new GUIStyle(), new GUIStyle());
+			configScrollPosition = GUI.BeginScrollView(new Rect(x, y, menuWidth - 20f, menuHeight - 80f), configScrollPosition, new Rect(x, y, menuWidth - 20f, scrollHeight), new GUIStyle(), GUI.skin.verticalScrollbar);
 
 			// Timer length.
 			GUI.Label(new Rect(x, y, fieldWidth, fieldHeight), "Timer length (seconds):", labelStyle);
