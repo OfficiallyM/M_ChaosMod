@@ -137,6 +137,10 @@ namespace ChaosMod
 			RegisterEffect(new Effects.Player.EffectSuperFOV());
 			RegisterEffect(new Effects.Player.EffectWobblyHead());
 			RegisterEffect(new Effects.Player.EffectBlind(resolutionX, resolutionY));
+			RegisterEffect(new Effects.Player.EffectGodmode());
+			RegisterEffect(new Effects.Player.EffectHeal());
+			RegisterEffect(new Effects.Player.EffectHydrated());
+			RegisterEffect(new Effects.Player.EffectFed());
 
 			// Vehicle effects.
 			RegisterEffect(new Effects.Vehicle.EffectExitVehicle());
@@ -152,6 +156,8 @@ namespace ChaosMod
 			RegisterEffect(new Effects.Vehicle.EffectDropParts());
 			RegisterEffect(new Effects.Vehicle.EffectEssentials());
 			//RegisterEffect(new Effects.Vehicle.EffectReplaceWheels()); // TODO: Get working
+			RegisterEffect(new Effects.Vehicle.EffectPristine());
+			RegisterEffect(new Effects.Vehicle.EffectRusty());
 
 			// World effects.
 			RegisterEffect(new Effects.World.EffectLowGravity());
