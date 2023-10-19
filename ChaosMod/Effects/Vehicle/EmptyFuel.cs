@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace ChaosMod.Effects.Vehicle
 {
@@ -16,12 +17,9 @@ namespace ChaosMod.Effects.Vehicle
 		{
 			if (mainscript.M.player.Car != null)
 			{
-				carscript car = mainscript.M.player.Car;
-				tankscript tank = car.gameObject.GetComponentInChildren<tankscript>();
-				if (tank != null)
-				{
-					tank.F.fluids.Clear();
-				}
+				tankscript tank = mainscript.M.player.Car.Tank;
+
+				tank?.F.fluids.Clear();
 			}
 		}
 	}
