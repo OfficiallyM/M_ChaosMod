@@ -12,6 +12,7 @@ using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 using Settings = ChaosMod.Core.Settings;
+using static UnityEngine.UI.ScrollRect;
 
 namespace ChaosMod
 {
@@ -196,7 +197,8 @@ namespace ChaosMod
 		/// </summary>
 		/// <param name="sender">ModEvent sender</param>
 		/// <param name="eventType">ModEvent eventType</param>
-		private void ModEventCallback(object sender, string eventType) {
+		private void ModEventCallback(object sender, string eventType) 
+		{
 			// Pass ModEvent callback to any active effects.
 			foreach (ActiveEffect effect in activeEffects)
 			{
