@@ -117,6 +117,10 @@ namespace ChaosMod
 			// Load modules.
 			config.Initialise(ModLoader.GetModConfigFolder(this) + "\\Config.json", effects, enabledEffects);
 			binds.OnLoad();
+
+			// Register mod event callback.
+			mainscript.ModEvent callback = ModEventCallback;
+			mainscript.ModEvents.Add(callback);
 		}
 
 		/// <summary>
@@ -160,6 +164,7 @@ namespace ChaosMod
 			RegisterEffect(new Effects.Vehicle.EffectRusty());
 			RegisterEffect(new Effects.Vehicle.EffectHalveRPM());
 			RegisterEffect(new Effects.Vehicle.EffectDoubleRPM());
+			RegisterEffect(new Effects.Vehicle.EffectThrottleStuck());
 
 			// World effects.
 			RegisterEffect(new Effects.World.EffectLowGravity());
@@ -184,6 +189,19 @@ namespace ChaosMod
 
 			if (!effect.DisabledByDefault)
 				enabledEffects.Add(effect);
+		}
+
+		/// <summary>
+		/// Mod event callback
+		/// </summary>
+		/// <param name="sender">ModEvent sender</param>
+		/// <param name="eventType">ModEvent eventType</param>
+		private void ModEventCallback(object sender, string eventType) {
+			// Pass ModEvent callback to any active effects.
+			foreach (ActiveEffect effect in activeEffects)
+			{
+				effect.Effect.ModEventCallback(sender, eventType);
+			}
 		}
 
 		public override void OnGUI()

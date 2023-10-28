@@ -50,6 +50,13 @@ namespace ChaosMod.Core
 		/// Unity OnGUI method. Only called if UseGUI is true.
 		/// </summary>
 		public virtual void OnGUI() { }
+
+		/// <summary>
+		/// Subscribe to ModEvent callbacks.
+		/// </summary>
+		/// <param name="sender">ModEvent sender</param>
+		/// <param name="eventType">ModEvent eventType</param>
+		public virtual void ModEventCallback(object sender, string eventType) { }
 	}
 
 	public class EffectHistory
