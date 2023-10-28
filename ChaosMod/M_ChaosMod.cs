@@ -167,6 +167,7 @@ namespace ChaosMod
 			RegisterEffect(new Effects.Vehicle.EffectDoubleRPM());
 			RegisterEffect(new Effects.Vehicle.EffectThrottleStuck());
 			RegisterEffect(new Effects.Vehicle.EffectBrakeStuck());
+			RegisterEffect(new Effects.Vehicle.EffectBrakeFailure());
 
 			// World effects.
 			RegisterEffect(new Effects.World.EffectLowGravity());
