@@ -12,7 +12,7 @@ namespace ChaosMod.Core
 		public virtual string Name { get; }
 
 		/// <summary>
-		/// Can be instant, timed or repeated.
+		/// Can be instant, timed, repeated or fixedRepeated.
 		/// </summary>
 		public virtual string Type { get; }
 

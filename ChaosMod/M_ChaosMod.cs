@@ -7,12 +7,9 @@ using ChaosMod.Modules;
 using ChaosMod.Extensions;
 using Logger = ChaosMod.Modules.Logger;
 using Config = ChaosMod.Modules.Config;
-using Random = System.Random;
-using System.Collections;
 using System.Linq;
-using System.Threading.Tasks;
 using Settings = ChaosMod.Core.Settings;
-using static UnityEngine.UI.ScrollRect;
+using ChaosMod.Effects.Vehicle;
 
 namespace ChaosMod
 {
@@ -45,6 +42,16 @@ namespace ChaosMod
 		{
 			fontSize = 20,
 			alignment = TextAnchor.UpperRight,
+			wordWrap = true,
+			normal = new GUIStyleState()
+			{
+				textColor = Color.white,
+			}
+		};
+		private GUIStyle leftStyle = new GUIStyle()
+		{
+			fontSize = 20,
+			alignment = TextAnchor.UpperLeft,
 			wordWrap = true,
 			normal = new GUIStyleState()
 			{
@@ -146,6 +153,10 @@ namespace ChaosMod
 			RegisterEffect(new Effects.Player.EffectHeal());
 			RegisterEffect(new Effects.Player.EffectHydrated());
 			RegisterEffect(new Effects.Player.EffectFed());
+			RegisterEffect(new Effects.Player.EffectThirsty());
+			RegisterEffect(new Effects.Player.EffectHungry());
+			RegisterEffect(new Effects.Player.EffectNeedShit());
+			RegisterEffect(new Effects.Player.EffectNeedPiss());
 
 			// Vehicle effects.
 			RegisterEffect(new Effects.Vehicle.EffectExitVehicle());
@@ -180,6 +191,7 @@ namespace ChaosMod
 			RegisterEffect(new Effects.World.EffectUFOs());
 			RegisterEffect(new Effects.World.EffectSandstorms());
 			RegisterEffect(new Effects.World.EffectRoadVanish(roadParent));
+			RegisterEffect(new Effects.World.EffectFastTime());
 		}
 
 		/// <summary>
@@ -351,6 +363,13 @@ namespace ChaosMod
 			List<ActiveEffect> removeQueue = new List<ActiveEffect>();
 			foreach (ActiveEffect active in activeEffects)
 			{
+				// Skip any fixedRepeated effects as these are handled
+				// in FixedUpdate().
+				if (active.Effect.Type == "fixedRepeated")
+				{
+					continue;
+				}
+
 				active.Remaining -= Time.deltaTime;
 				bool expired = false;
 
@@ -477,6 +496,31 @@ namespace ChaosMod
 							Logger.Log($"Effect {effect.Name} errored during trigger and will be disabled. Error - {ex}", Logger.LogLevel.Error);
 						}
 						break;
+					case "fixedRepeated":
+						try
+						{
+							if (effect.Length > 0)
+							{
+								activeEffect = new ActiveEffect()
+								{
+									Effect = effect,
+									Remaining = effect.Length,
+								};
+								activeEffects.Add(activeEffect);
+								effect.Trigger();
+							}
+							else
+							{
+								Logger.Log($"Repeated effect {effect.Name} has no Length so will be disabled.", Logger.LogLevel.Error);
+								effects.Remove(effect);
+								addToHistory = false;
+							}
+						}
+						catch (Exception ex)
+						{
+							Logger.Log($"Effect {effect.Name} errored during trigger and will be disabled. Error - {ex}", Logger.LogLevel.Error);
+						}
+						break;
 					case "meta":
 						switch (effect.GetType().Name)
 						{
@@ -514,6 +558,43 @@ namespace ChaosMod
 
 				settings.effectDelay = settings.currentEffectDelay;
 			}
+		}
+		
+		public override void FixedUpdate()
+		{
+			// Trigger active effects.
+			List<ActiveEffect> removeQueue = new List<ActiveEffect>();
+			foreach (ActiveEffect active in activeEffects)
+			{
+				// Skip any non fixedRepeated effects as these are handled
+				// in Update().
+				if (active.Effect.Type != "fixedRepeated")
+				{
+					continue;
+				}
+
+				active.Remaining -= Time.deltaTime;
+				bool expired = false;
+
+				if (active.Remaining <= 0)
+				{
+					removeQueue.Add(active);
+					active.Effect.End();
+					expired = true;
+				}
+
+				if (!expired)
+				{
+					active.Effect.Trigger();
+				}
+			}
+
+			// Clear any expired active effects.
+			foreach (ActiveEffect active in removeQueue)
+			{
+				activeEffects.Remove(active);
+			}
+			removeQueue.Clear();
 		}
 
 		/// <summary>
