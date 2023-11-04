@@ -14,7 +14,6 @@ namespace ChaosMod.Effects.World
 		public override string Type => "fixedRepeated";
 		public override float Length => 90;
 		public override float Frequency => 0;
-		private bool firstRun = true;
 
 		public override void Trigger()
 		{
