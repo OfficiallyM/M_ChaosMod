@@ -13,7 +13,7 @@ namespace ChaosMod.Effects.World
 		public override string Name => "I think that's a sandstorm!";
 		public override string Type => "repeated";
 		public override float Length => 30f;
-		public override float Frequency => 2.5f;
+		public override float Frequency => 10f;
 
 		public override void Trigger()
 		{
