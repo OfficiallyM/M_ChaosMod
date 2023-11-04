@@ -157,6 +157,8 @@ namespace ChaosMod
 			RegisterEffect(new Effects.Player.EffectHungry());
 			RegisterEffect(new Effects.Player.EffectNeedShit());
 			RegisterEffect(new Effects.Player.EffectNeedPiss());
+			RegisterEffect(new Effects.Player.EffectDropHand());
+			RegisterEffect(new Effects.Player.EffectDropAll());
 
 			// Vehicle effects.
 			RegisterEffect(new Effects.Vehicle.EffectExitVehicle());
@@ -179,6 +181,8 @@ namespace ChaosMod
 			RegisterEffect(new Effects.Vehicle.EffectThrottleStuck());
 			RegisterEffect(new Effects.Vehicle.EffectBrakeStuck());
 			RegisterEffect(new Effects.Vehicle.EffectBrakeFailure());
+			RegisterEffect(new Effects.Vehicle.EffectDropRandomPart());
+			RegisterEffect(new Effects.Vehicle.EffectStop());
 
 			// World effects.
 			RegisterEffect(new Effects.World.EffectLowGravity());
